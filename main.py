@@ -1,19 +1,14 @@
 import pygame
 import constantes
 import personaje
+from weapon import Weapon
 
 #Correr en la consola: venv/Scripts/activate
 
 pygame.init()
 
-
-
-
-
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
-
 pygame.display.set_caption("Primer juego con Pygame")
-
 
 def escalar_img(image,scale):
     w = image.get_width()
@@ -21,18 +16,23 @@ def escalar_img(image,scale):
     nueva_imagen = pygame.transform.scale(image, (w*scale,h*scale))
     return nueva_imagen
 
+
+#Importar imagenes
+
 animaciones = []
 for i in range(7):
-    img = pygame.image.load(f"assets\images\characters\players\Player_{i}.png")
+    img = pygame.image.load(f"assets\images\characters\players\Player_{i}.png").convert_alpha() #conver_alpha optimiza las imagenes para una mejor velocidad de carga, manteniendo la transparencia
     img = escalar_img(img,constantes.ESCALA_PERSONAJE )
     animaciones.append(img)
 
-#jugador = personaje.Personaje(50,50,player_image)
+imagen_pistola = pygame.image.load(f"assets\images\weapons\Glock18.png").convert_alpha()
+imagen_pistola = escalar_img(imagen_pistola,constantes.ESCALA_PISTOLA)
+
+#Crear un jugador de la clase personaje
 jugador = personaje.Personaje(50,50,animaciones)
 
-#player_image = pygame.image.load("assets\images\characters\players\Player_0.png")
-#player_image = pygame.transform.scale(player_image, (player_image.get_width()*constantes.ESCALA_PERSONAJE,player_image.get_height()*constantes.ESCALA_PERSONAJE))
-#player_image = escalar_img(player_image, constantes.ESCALA_PERSONAJE)
+#Crear un arma de la clase Weapon
+pistola = Weapon(imagen_pistola)
 
 #Definir las variables de movimiento del jugador
 mover_arriba = False
@@ -45,9 +45,6 @@ reloj = pygame.time.Clock()
 run = True
 
 while run:
-
-    #Relleno con el color de fondo
-
     ventana.fill(constantes.COLOR_BG)
 
     #Que vaya a 60 FPS
@@ -65,30 +62,36 @@ while run:
         delta_y = -5
     if mover_abajo:
         delta_y = 5
+    
+    
 
-    #print(f"{delta_x}, {delta_y}")
     #Mover al jugador
     jugador.movimiento(delta_x, delta_y)
 
+    #Actualizar el estado del jugador
     jugador.update()
 
+    #Actualizar el estado del arma
+    pistola.update(jugador)
+
+    #Dibujar al jugador
     jugador.dibujar(ventana)
+
+    #Dibujar el arma
+    pistola.dibujar(ventana)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                #print("Izquierda")
                 mover_izquierda = True
             if event.key == pygame.K_d:
-                #print("Derecha")
                 mover_derecha = True
             if event.key == pygame.K_w:
-                #print("Arriba")
                 mover_arriba = True
             if event.key == pygame.K_s:
-                #print("Abajo")
                 mover_abajo = True
             
         if event.type == pygame.KEYUP:
@@ -102,6 +105,5 @@ while run:
                 mover_abajo = False
 
     pygame.display.update() #Asegura que se mantenga el programe en ejecución
-
 
 pygame.quit()

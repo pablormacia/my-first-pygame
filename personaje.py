@@ -8,7 +8,7 @@ class Personaje():
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks() #Guarda el tiempo transcurrido en milisegundos
         self.image = animaciones[self.frame_index]
-        self.forma = pygame.Rect(0,0,constantes.ANCHO_PERSONAJE,constantes.ALTO_PERSONAJE)
+        self.forma = self.image.get_rect()
         self.forma.center = (x,y) # Lo movemos a la coordenada x,y que le pasamos
         
     def update(self):
@@ -21,14 +21,13 @@ class Personaje():
             self.frame_index=0
 
     def dibujar(self, interfaz):
-        imagen_flip = pygame.transform.flip(self.image, self.flip,False)
+        imagen_flip = pygame.transform.flip(self.image, self.flip, False)
         interfaz.blit(imagen_flip, self.forma) #Debo indicar que quiero dibujar y donde (forma)
-        #pygame.draw.rect(interfaz, constantes.COLOR_PERSONAJE,self.forma, width=1) 
 
     def movimiento(self, delta_x, delta_y):
-        if(delta_x)<0:
+        if delta_x<0:
             self.flip = True
-        else:
+        if delta_x>0:
             self.flip = False
-        self.forma.x = self.forma.x + delta_x
-        self.forma.y = self.forma.y + delta_y
+        self.forma.x += delta_x
+        self.forma.y += delta_y
