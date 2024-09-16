@@ -25,14 +25,22 @@ for i in range(7):
     img = escalar_img(img,constantes.ESCALA_PERSONAJE )
     animaciones.append(img)
 
+#Imagenes
 imagen_pistola = pygame.image.load(f"assets\images\weapons\Glock18.png").convert_alpha()
 imagen_pistola = escalar_img(imagen_pistola,constantes.ESCALA_PISTOLA)
+
+imagen_bala = pygame.image.load(f"assets\images\weapons\Bulletuzi.png").convert_alpha()
+imagen_bala = escalar_img(imagen_bala,constantes.ESCALA_BALA)
 
 #Crear un jugador de la clase personaje
 jugador = personaje.Personaje(50,50,animaciones)
 
 #Crear un arma de la clase Weapon
-pistola = Weapon(imagen_pistola)
+pistola = Weapon(imagen_pistola,imagen_bala)
+
+#Crear un grupo de sprites
+grupo_balas = pygame.sprite.Group() #Porque pueden haber varias balas en la pantalla
+
 
 #Definir las variables de movimiento del jugador
 mover_arriba = False
@@ -72,13 +80,24 @@ while run:
     jugador.update()
 
     #Actualizar el estado del arma
-    pistola.update(jugador)
+    bala = pistola.update(jugador)
+    if bala:   
+        grupo_balas.add(bala)
+
+    #print(grupo_balas)
+    for bala in grupo_balas:
+        bala.update()
+
 
     #Dibujar al jugador
     jugador.dibujar(ventana)
 
     #Dibujar el arma
     pistola.dibujar(ventana)
+
+    #Dibujar balas
+    for bala in grupo_balas:
+        bala.dibujar(ventana)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
