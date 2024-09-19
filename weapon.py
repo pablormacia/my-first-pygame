@@ -1,6 +1,7 @@
 import pygame
 import math
 import constantes
+import random
 
 class Weapon():
     def __init__(self, image,imagen_bala):
@@ -71,13 +72,21 @@ class Bullet(pygame.sprite.Sprite):  # Hereda de la clase pygame.sprite.Sprite
         self.delta_x = math.cos(math.radians(self.angulo))*constantes.VELOCIDAD_BALA
         self.delta_y = -math.sin(math.radians(self.angulo))*constantes.VELOCIDAD_BALA
 
-    def update(self):
+    def update(self,lista_enemigos):
         self.rect.x += self.delta_x
         self.rect.y += self.delta_y
 
         #Veo si las balas salieron de la pantalla para eliminarlas de la memoria:
         if self.rect.right <0 or self.rect.left > constantes.ANCHO_VENTANA or self.rect.bottom<0 or self.rect.top>constantes.ALTO_VENTANA:
             self.kill()
+
+        #Verificar si hay colisión con enemigos
+        for enemigo in lista_enemigos:
+            if enemigo.forma.colliderect(self.rect):
+                danio = 15 + random.randint(-7,7)
+                enemigo.energia -= danio
+                self.kill() #El método kill funciona en la libreria sprites
+                break
 
     def dibujar(self,interfaz):
         interfaz.blit(self.image, (self.rect.centerx,self.rect.centery - int(self.image.get_height())))

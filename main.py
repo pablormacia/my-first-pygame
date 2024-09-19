@@ -129,7 +129,7 @@ while run:
 
     #print(grupo_balas)
     for bala in grupo_balas:
-        bala.update()
+        bala.update(lista_enemigos)
 
 
     #Dibujar al jugador

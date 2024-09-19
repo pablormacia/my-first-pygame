@@ -2,7 +2,9 @@ import pygame
 import constantes
 
 class Personaje():
-    def __init__(self, x, y,animaciones):
+    def __init__(self, x, y,animaciones, energia = 100):
+        self.energia = energia
+        self.vivo = True
         self.flip = False
         self.animaciones = animaciones
         self.frame_index = 0
@@ -12,6 +14,10 @@ class Personaje():
         self.forma.center = (x,y) # Lo movemos a la coordenada x,y que le pasamos
         
     def update(self):
+        #Comprobar si el personaje está vivo:
+        if self.energia <0:
+            self.energia = 0
+            self.vivo = False
         cooldown_animacion = 100 #cuanto tiempo quiero que se mantenga una imagen en ms
         self.image = self.animaciones[self.frame_index]
         if pygame.time.get_ticks()-self.update_time >= cooldown_animacion: #Al inicio del juego son iguales, pero luego cambia
