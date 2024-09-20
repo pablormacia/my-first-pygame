@@ -3,6 +3,7 @@ import constantes
 import personaje
 from weapon import Weapon
 import os #Para pode trabajar con archivos y carpetas
+from textos import DamageText
 
 #Correr en la consola: venv/Scripts/activate
 
@@ -27,6 +28,9 @@ pygame.init()
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
 pygame.display.set_caption("Primer juego con Pygame")
 
+#Inicializar fuentes
+
+font = pygame.font.Font("assets//fonts//AbaddonBold.ttf")#Uso doble barras para evitar que se genere un caracter de escape \f
 
 #Importar imagenes
 animaciones = []
@@ -78,7 +82,13 @@ lista_enemigos.append(mushroom)
 pistola = Weapon(imagen_pistola,imagen_bala)
 
 #Crear un grupo de sprites
+grupo_damage_text = pygame.sprite.Group() #Es necesario ya que puede mostrarse más de un texto al mismo tiempo
 grupo_balas = pygame.sprite.Group() #Porque pueden haber varias balas en la pantalla
+
+#temporal y borrar
+"""damage_text = DamageText(100,240,"25",font,constantes.ROJO)
+grupo_damage_text.add(damage_text)"""
+
 
 
 #Definir las variables de movimiento del jugador
@@ -129,8 +139,13 @@ while run:
 
     #print(grupo_balas)
     for bala in grupo_balas:
-        bala.update(lista_enemigos)
+        danio,pos_danio = bala.update(lista_enemigos)
+        if danio>0:
+            danio_text = DamageText(pos_danio.centerx,pos_danio.centery,str(danio),font,constantes.ROJO)
+            grupo_damage_text.add(danio_text)
 
+    #Actualizar el daño
+    grupo_damage_text.update() #Al heredar de la clase sprite ya tiene el método update, a diferencia de personaje por ej que lo tuvimos que crear a mano
 
     #Dibujar al jugador
     jugador.dibujar(ventana)
@@ -145,6 +160,9 @@ while run:
     #Dibujar balas
     for bala in grupo_balas:
         bala.dibujar(ventana)
+
+    #Dibujar texto
+    grupo_damage_text.draw(ventana)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
