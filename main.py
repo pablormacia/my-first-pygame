@@ -33,6 +33,14 @@ pygame.display.set_caption("Primer juego con Pygame")
 font = pygame.font.Font("assets//fonts//AbaddonBold.ttf")#Uso doble barras para evitar que se genere un caracter de escape \f
 
 #Importar imagenes
+
+corazon_vacio = pygame.image.load(f"assets\images\items\heart-empty.png").convert_alpha()
+corazon_vacio = escalar_img(corazon_vacio, constantes.ESCALA_CORAZON)
+corazon_mitad = pygame.image.load(f"assets\images\items\heart-half.png").convert_alpha()
+corazon_mitad = escalar_img(corazon_mitad, constantes.ESCALA_CORAZON)
+corazon_lleno = pygame.image.load(f"assets\images\items\heart-full.png").convert_alpha()
+corazon_lleno = escalar_img(corazon_lleno, constantes.ESCALA_CORAZON)
+
 animaciones = []
 for i in range(7):
     img = pygame.image.load(f"assets\images\characters\players\Player_{i}.png").convert_alpha() #conver_alpha optimiza las imagenes para una mejor velocidad de carga, manteniendo la transparencia
@@ -64,8 +72,19 @@ imagen_pistola = escalar_img(imagen_pistola,constantes.ESCALA_PISTOLA)
 imagen_bala = pygame.image.load(f"assets\images\weapons\Bulletuzi.png").convert_alpha()
 imagen_bala = escalar_img(imagen_bala,constantes.ESCALA_BALA)
 
+def vida_jugador():
+    c_mitad_dibujado = False
+    for i in range(4):
+        if jugador.energia>=((i+1)*25):
+            ventana.blit(corazon_lleno, (5 + i*35,5))
+        elif jugador.energia%25 >0 and c_mitad_dibujado==False:
+            ventana.blit(corazon_mitad, (5 + i*35,5))
+            c_mitad_dibujado = True
+        else:
+            ventana.blit(corazon_vacio, (5 + i*35,5))
+
 #Crear un jugador de la clase personaje
-jugador = personaje.Personaje(50,50,animaciones)
+jugador = personaje.Personaje(50,50,animaciones,60)
 
 #Crear un enemigo de la clase personaje
 goblin = personaje.Personaje(400,300,animaciones_enemigos[0])
@@ -160,6 +179,9 @@ while run:
     #Dibujar balas
     for bala in grupo_balas:
         bala.dibujar(ventana)
+
+    #Dibujar las vidas
+    vida_jugador()
 
     #Dibujar texto
     grupo_damage_text.draw(ventana)
