@@ -84,6 +84,10 @@ for i in range(num_coin_images):
     img = escalar_img(img,1)
     coin_images.append(img)
 
+def dibujar_texto(texto,fuente,color,x,y):
+    img = fuente.render(texto,True,color)
+    ventana.blit(img,(x,y))
+
 def vida_jugador():
     c_mitad_dibujado = False
     for i in range(4):
@@ -187,7 +191,7 @@ while run:
     grupo_damage_text.update() #Al heredar de la clase sprite ya tiene el método update, a diferencia de personaje por ej que lo tuvimos que crear a mano
 
     #Actualizar items
-    grupo_items.update() #puedo usar el método porque uso sprites
+    grupo_items.update(jugador) #puedo usar el método porque uso sprites
 
 
     #Dibujar al jugador
@@ -209,6 +213,7 @@ while run:
 
     #Dibujar textos
     grupo_damage_text.draw(ventana)
+    dibujar_texto(f"Score: {jugador.score}", font, (255,255,0),700,5)
 
     #Dibujar items
     grupo_items.draw(ventana)
